@@ -5,7 +5,8 @@ FROM ${BASE_IMAGE}
 USER root
 
 # The qualified desktop/browser setup is Linux amd64.
-RUN test "$(dpkg --print-architecture)" = amd64
+RUN test "$(dpkg --print-architecture)" = amd64 \
+    || { echo 'Cua requires linux/amd64; build with PLATFORM=linux/amd64.' >&2; exit 1; }
 
 # libglib2.0-bin supplies gdbus, used by cua-driver doctor's AT-SPI probe.
 RUN apt-get update \
@@ -14,6 +15,7 @@ RUN apt-get update \
         dbus dbus-x11 at-spi2-core libglib2.0-bin \
         libxi6 libxtst6 libx11-6 libxext6 \
         x11-utils \
+        libvulkan1 mesa-vulkan-drivers vulkan-tools \
     && rm -rf /var/lib/apt/lists/*
 
 # Shared per-box bus for GUI apps, agent shells, and the driver.

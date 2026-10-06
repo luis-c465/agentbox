@@ -1,6 +1,9 @@
+# syntax=docker/dockerfile:1
+ARG BOX_IMAGE=agentbox/box:dev
+
 FROM oven/bun:1.4.2 AS bun
 
-FROM agentbox/box:dev
+FROM ${BOX_IMAGE}
 
 USER root
 
@@ -9,7 +12,8 @@ RUN ln -s /usr/local/bin/bun /usr/local/bin/bunx
 
 # Keep the default toolbox minimal.
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends ripgrep \
+    && apt-get install -y --no-install-recommends ripgrep fd-find \
+    && ln -s /usr/bin/fdfind /usr/local/bin/fd \
     && rm -rf /var/lib/apt/lists/*
 
 # Preinstall Pi so Agent Box skips its per-box npm installation.
@@ -25,5 +29,5 @@ RUN npm install -g --prefix /usr/local @earendil-works/pi-coding-agent@1.0.4 \
 
 USER vscode
 
-RUN bun --version && rg --version && pi --version
+RUN bun --version && rg --version && fd --version && pi --version
 

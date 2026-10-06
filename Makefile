@@ -1,12 +1,43 @@
-PLATFORM ?= linux/amd64
-VERSION ?= dev
-BASE_IMAGE ?= agentbox/base:$(VERSION)
-CUA_IMAGE ?= agentbox/cua:$(VERSION)
+VERSION ?=
+IMAGE_PREFIX ?= agentbox
+PLATFORM ?=
+BOX_IMAGE ?= agentbox/box:dev
+BASE_IMAGE ?= $(IMAGE_PREFIX)/base:dev
 
-.PHONY: build-base build-cua check install-cua-skills
+IMAGES := $(patsubst images/%/Dockerfile,%,$(wildcard images/*/Dockerfile))
+BUILD_ARGS_base = --build-arg BOX_IMAGE=$(BOX_IMAGE)
+BUILD_ARGS_cua = --build-arg BASE_IMAGE=$(BASE_IMAGE)
 
-build-base:
-	docker build --platform $(PLATFORM) -t $(BASE_IMAGE) images/base
+.DEFAULT_GOAL := help
+.PHONY: help build
 
-build-cua: build-base
-	docker build --platform $(PLATFORM) --build-arg BASE_IMAGE=$(BASE_IMAGE) -t $(CUA_IMAGE) images/cua
+help:
+	@echo 'Usage: make build <image> [VERSION=<version>] [PLATFORM=<platform>]'
+	@echo 'Available images: $(IMAGES)'
+	@echo 'Always tags dev; VERSION adds a second tag. Builds only the selected image.'
+	@echo 'Overrides: IMAGE_PREFIX, BOX_IMAGE, BASE_IMAGE'
+	@echo 'Use a Docker-driver Buildx builder for locally available parent images.'
+
+ifneq ($(filter build,$(MAKECMDGOALS)),)
+SELECTED_IMAGE := $(filter-out build,$(MAKECMDGOALS))
+ifneq ($(words $(SELECTED_IMAGE)),1)
+$(error Usage: make build <image> [VERSION=<version>]; select exactly one image from: $(IMAGES))
+endif
+ifeq ($(filter $(SELECTED_IMAGE),$(IMAGES)),)
+$(error Unknown image '$(SELECTED_IMAGE)'; available images: $(IMAGES))
+endif
+
+# Make treats the image selector as another goal; the actual build runs once below.
+.PHONY: $(SELECTED_IMAGE)
+$(SELECTED_IMAGE):
+	@:
+
+build:
+	docker buildx build --load $(if $(PLATFORM),--platform $(PLATFORM)) \
+		--tag $(IMAGE_PREFIX)/$(SELECTED_IMAGE):dev \
+		$(if $(filter-out dev,$(VERSION)),--tag $(IMAGE_PREFIX)/$(SELECTED_IMAGE):$(VERSION)) \
+		$(BUILD_ARGS_$(SELECTED_IMAGE)) images/$(SELECTED_IMAGE)
+else
+build:
+	@$(MAKE) --no-print-directory help
+endif
