@@ -13,6 +13,26 @@ agentbox config set --project box.imageDocker agentbox/cua:v1
 agentbox pi --provider docker --name cua-v1
 ```
 
+To build both images on remote Docker over SSH instead:
+
+```bash
+docker context create agentbox-devbox --docker host=ssh://devbox
+docker --context agentbox-devbox buildx inspect agentbox-devbox
+make build base DOCKER_CONTEXT=agentbox-devbox
+make build cua DOCKER_CONTEXT=agentbox-devbox
+agentbox config set --project box.imageRemoteDocker agentbox/cua:latest
+agentbox pi --provider docker:devbox --name cua-latest
+```
+
+Create the context only once. Use a **Docker-driver builder attached to the remote
+context**; inspection must show driver `docker` and the devbox endpoint. Make
+explicitly selects the context-named builder, overriding `BUILDX_BUILDER` without
+changing Docker's default context.
+A `docker-container` builder cannot resolve a parent available only in devbox's
+Docker image store. `--load` stores the output on devbox, not locally. Omitting
+`DOCKER_CONTEXT` retains local usage; `docker:devbox` is Agentbox's SSH-host provider,
+not the Docker context name.
+
 Each command builds only its selected image. Cua defaults to
 `agentbox/base:latest`; override it with `BASE_IMAGE=<image>` to use another parent.
 Builds always tag `agentbox/cua:latest`, with `VERSION=v1` adding `agentbox/cua:v1`.

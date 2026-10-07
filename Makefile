@@ -1,6 +1,7 @@
 VERSION ?=
 IMAGE_PREFIX ?= agentbox
 PLATFORM ?=
+DOCKER_CONTEXT ?=
 BOX_IMAGE ?= ghcr.io/madarco/agentbox/box:0.33.0
 BASE_IMAGE ?= $(IMAGE_PREFIX)/base:latest
 
@@ -15,8 +16,9 @@ help:
 	@echo 'Usage: make build <image> [VERSION=<version>] [PLATFORM=<platform>]'
 	@echo 'Available images: $(IMAGES)'
 	@echo 'Always tags latest; VERSION adds a second tag. Builds only the selected image.'
-	@echo 'Overrides: IMAGE_PREFIX, BOX_IMAGE, BASE_IMAGE'
-	@echo 'Use a Docker-driver Buildx builder for locally available parent images.'
+	@echo 'Overrides: IMAGE_PREFIX, BOX_IMAGE, BASE_IMAGE, DOCKER_CONTEXT'
+	@echo 'DOCKER_CONTEXT selects a Docker context and its named builder; empty keeps local behavior.'
+	@echo 'Use a Docker-driver Buildx builder on the target context for daemon-local parent images.'
 
 ifneq ($(filter build,$(MAKECMDGOALS)),)
 SELECTED_IMAGE := $(filter-out build,$(MAKECMDGOALS))
@@ -33,7 +35,7 @@ $(SELECTED_IMAGE):
 	@:
 
 build:
-	docker buildx build --load $(if $(PLATFORM),--platform $(PLATFORM)) \
+	docker $(if $(DOCKER_CONTEXT),--context $(DOCKER_CONTEXT)) buildx build $(if $(DOCKER_CONTEXT),--builder $(DOCKER_CONTEXT)) --load $(if $(PLATFORM),--platform $(PLATFORM)) \
 		--tag $(IMAGE_PREFIX)/$(SELECTED_IMAGE):latest \
 		$(if $(filter-out latest,$(VERSION)),--tag $(IMAGE_PREFIX)/$(SELECTED_IMAGE):$(VERSION)) \
 		$(BUILD_ARGS_$(SELECTED_IMAGE)) images/$(SELECTED_IMAGE)
