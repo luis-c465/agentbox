@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1
-ARG BOX_IMAGE=agentbox/box:latest
+ARG BOX_IMAGE=ghcr.io/madarco/agentbox/box:latest
 
 FROM oven/bun:1.4.2 AS bun
 
@@ -30,4 +30,3 @@ RUN npm install -g --prefix /usr/local @earendil-works/pi-coding-agent@1.0.4 \
 USER vscode
 
 RUN bun --version && rg --version && fd --version && pi --version
-
