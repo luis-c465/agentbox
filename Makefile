@@ -1,7 +1,7 @@
 VERSION ?=
 IMAGE_PREFIX ?= agentbox
 PLATFORM ?=
-BOX_IMAGE ?= agentbox/box:latest
+BOX_IMAGE ?= ghcr.io/madarco/agentbox/box:0.33.0
 BASE_IMAGE ?= $(IMAGE_PREFIX)/base:latest
 
 IMAGES := $(patsubst images/%/Dockerfile,%,$(wildcard images/*/Dockerfile))
