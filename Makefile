@@ -1,8 +1,8 @@
 VERSION ?=
 IMAGE_PREFIX ?= agentbox
 PLATFORM ?=
-BOX_IMAGE ?= agentbox/box:dev
-BASE_IMAGE ?= $(IMAGE_PREFIX)/base:dev
+BOX_IMAGE ?= agentbox/box:latest
+BASE_IMAGE ?= $(IMAGE_PREFIX)/base:latest
 
 IMAGES := $(patsubst images/%/Dockerfile,%,$(wildcard images/*/Dockerfile))
 BUILD_ARGS_base = --build-arg BOX_IMAGE=$(BOX_IMAGE)
@@ -14,7 +14,7 @@ BUILD_ARGS_cua = --build-arg BASE_IMAGE=$(BASE_IMAGE)
 help:
 	@echo 'Usage: make build <image> [VERSION=<version>] [PLATFORM=<platform>]'
 	@echo 'Available images: $(IMAGES)'
-	@echo 'Always tags dev; VERSION adds a second tag. Builds only the selected image.'
+	@echo 'Always tags latest; VERSION adds a second tag. Builds only the selected image.'
 	@echo 'Overrides: IMAGE_PREFIX, BOX_IMAGE, BASE_IMAGE'
 	@echo 'Use a Docker-driver Buildx builder for locally available parent images.'
 
@@ -34,8 +34,8 @@ $(SELECTED_IMAGE):
 
 build:
 	docker buildx build --load $(if $(PLATFORM),--platform $(PLATFORM)) \
-		--tag $(IMAGE_PREFIX)/$(SELECTED_IMAGE):dev \
-		$(if $(filter-out dev,$(VERSION)),--tag $(IMAGE_PREFIX)/$(SELECTED_IMAGE):$(VERSION)) \
+		--tag $(IMAGE_PREFIX)/$(SELECTED_IMAGE):latest \
+		$(if $(filter-out latest,$(VERSION)),--tag $(IMAGE_PREFIX)/$(SELECTED_IMAGE):$(VERSION)) \
 		$(BUILD_ARGS_$(SELECTED_IMAGE)) images/$(SELECTED_IMAGE)
 else
 build:

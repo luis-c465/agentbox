@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1
-ARG BASE_IMAGE=agentbox/base:dev
+ARG BASE_IMAGE=agentbox/base:latest
 FROM ${BASE_IMAGE}
 
 USER root

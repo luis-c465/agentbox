@@ -14,8 +14,8 @@ agentbox pi --provider docker --name cua-v1
 ```
 
 Each command builds only its selected image. Cua defaults to
-`agentbox/base:dev`; override it with `BASE_IMAGE=<image>` to use another parent.
-Builds always tag `agentbox/cua:dev`, with `VERSION=v1` adding `agentbox/cua:v1`.
+`agentbox/base:latest`; override it with `BASE_IMAGE=<image>` to use another parent.
+Builds always tag `agentbox/cua:latest`, with `VERSION=v1` adding `agentbox/cua:v1`.
 On arm64 hosts, pass `PLATFORM=linux/amd64` to both builds. Use a Docker-driver
 Buildx builder when the parent images are available only locally.
 
@@ -41,8 +41,8 @@ In a fresh box using the rebuilt image, preferably after the desktop is ready, r
 vulkaninfo --summary
 ```
 
-Vulkan should initialize and list at least one device. Without a compatible GPU
-exposed to the container, a Mesa software device such as llvmpipe is expected and
+Vulkan should initialize and list at least one latestice. Without a compatible GPU
+exposed to the container, a Mesa software latestice such as llvmpipe is expected and
 acceptable. Installing these packages does not enable GPU passthrough. Run this
 check in the live box rather than during the image build. If the desktop is not
 running, use `env -u DISPLAY vulkaninfo --summary` to skip X11 surface checks.

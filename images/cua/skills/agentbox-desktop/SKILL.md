@@ -17,7 +17,7 @@ Read the official `cua-driver` skill at `../cua-driver/SKILL.md` before operatin
 
 ```bash
 mkdir -p /tmp/cua-driver
-nohup agentbox-cua-serve > /tmp/cua-driver/daemon.log 2>&1 < /dev/null &
+nohup agentbox-cua-serve > /tmp/cua-driver/daemon.log 2>&1 < /latest/null &
 ```
 
 - If startup fails, inspect the log and check `xdpyinfo -display "$DISPLAY"`. Do not repeatedly launch duplicate daemons. Do not replace Agentbox's desktop startup or silently install packages.

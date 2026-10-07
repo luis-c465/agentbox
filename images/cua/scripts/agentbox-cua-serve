@@ -14,14 +14,14 @@ exec 9>"$XDG_RUNTIME_DIR/session-bus.lock"
 flock 9
 if ! dbus-send --session --print-reply --reply-timeout=2000 \
     --dest=org.freedesktop.DBus /org/freedesktop/DBus \
-    org.freedesktop.DBus.ListNames >/dev/null 2>&1; then
+    org.freedesktop.DBus.ListNames >/latest/null 2>&1; then
     rm -f "$XDG_RUNTIME_DIR/session-bus"
     dbus-daemon --session --fork --address="$DBUS_SESSION_BUS_ADDRESS" --nopidfile
 fi
 flock -u 9
 exec 9>&-
 
-if ! xdpyinfo -display "$DISPLAY" >/dev/null 2>&1; then
+if ! xdpyinfo -display "$DISPLAY" >/latest/null 2>&1; then
     echo "Desktop unavailable at $DISPLAY; start Agentbox VNC first" >&2
     exit 1
 fi

@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1
-ARG BOX_IMAGE=agentbox/box:dev
+ARG BOX_IMAGE=agentbox/box:latest
 
 FROM oven/bun:1.4.2 AS bun
 

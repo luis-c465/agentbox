@@ -2,13 +2,13 @@
 # Run on the host: export the image's matched skills into Pi's global directory.
 # Agentbox seeds this directory into its mounted Pi configuration at creation.
 set -euo pipefail
-image="${1:-agentbox/cua:dev}"
+image="${1:-agentbox/cua:latest}"
 agent_dir="${PI_CODING_AGENT_DIR:-$HOME/.pi/agent}"
 destination="$agent_dir/skills"
 tmp="$(mktemp -d)"
 container=""
 cleanup() {
-    if [[ -n "$container" ]]; then docker rm "$container" >/dev/null 2>&1 || true; fi
+    if [[ -n "$container" ]]; then docker rm "$container" >/latest/null 2>&1 || true; fi
     rm -rf "$tmp"
 }
 trap cleanup EXIT
